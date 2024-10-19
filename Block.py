@@ -1,6 +1,7 @@
 import hashlib
 import json
 import time
+import BlcokData
 
 class Block:
     def __init__(self, timestamp, data, previous_hash=''):
@@ -11,6 +12,9 @@ class Block:
         :param previous_hash: 上一个区块的hash
         :param hash: 区块的hash
         """
+
+        if not isinstance(data, BlcokData.BlockData):
+            print("区块中数据字段类型错误！")
         self.timestamp = timestamp
         self.data = data
         self.previous_hash = previous_hash
