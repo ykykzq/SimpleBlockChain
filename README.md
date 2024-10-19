@@ -16,3 +16,7 @@
 
 - 如果恶意用户尝试通过短哈希攻击获取所有权，需要浪费大量的算力，即使攻击成功，也不影响安全性，见下。
 - 如果恶意用户没有源文件，则无法获知文件的哈希，得到密文也无法获得数据。通过该策略保证了数据安全性。
+
+## 参考文献
+
+[1]Zhang, Bo, et al. "Enabling secure deduplication in encrypted decentralized storage." *International Conference on Network and System Security*. Cham: Springer Nature Switzerland, 2022.
