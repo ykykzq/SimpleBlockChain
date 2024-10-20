@@ -1,6 +1,6 @@
 import hashlib
+import json
 import os
-import base64
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -89,7 +89,12 @@ class BlockData:
         # 写入解密后的文件
         with open(encrypted_file_path[:-4]+'.dec', 'wb') as f:  # 去掉 .enc 后缀
             f.write(plaintext)
-
+            
+    def to_dict(self):
+        """将 BlockData 实例转换为字典"""
+        return {
+            'files': self.files,
+        }
 
 if __name__ == '__main__':
     '''
@@ -134,4 +139,4 @@ if __name__ == '__main__':
     data.decrypt_file('../data/file_example.enc',# 计算文件的哈希值
         data.calculate_file_hash('../data/file_example'))
 
-    print(data.files)
+    print(json.dumps(data.to_dict(), ensure_ascii=False))
