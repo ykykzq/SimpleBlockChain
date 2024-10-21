@@ -44,7 +44,7 @@ class Block:
             self.nonce = self.nonce + 1
             self.hash = self.calculate_hash()
 
-        print("挖到区块{0},耗时为{1}".format(self.hash, time.time()-time_start))
+        print("挖到区块:\n \t{0}\n耗时为:\n \t{1}".format(self.hash, time.time()-time_start))
 
     def to_dict(self):
         '''

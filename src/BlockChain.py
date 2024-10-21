@@ -172,4 +172,7 @@ if __name__ == '__main__':
     public_key_content = ''.join(lines[1:-1])
 
     new_bc.upload_files(['../workspace/data/file_example',],public_key_content)
+    new_bc.save_to_file('../workspace/block_chain/new_block_chain.json')
+    
+    print('检验区块链的合法性:')
     print(new_bc.verify_blockchain())

@@ -29,7 +29,7 @@ class BlockData:
         # 计算密文的哈希值
         enc_file_hash_str = BlockData.calculate_file_hash(file_path + '.enc')
         # 将用户信息＆密文哈希值写入数据
-        self.files.append((author_hash_str, enc_file_hash_str))
+        self.files.append({'User':author_hash_str, 'File':enc_file_hash_str})
 
     @classmethod
     def calculate_file_hash(cls, file_path: str):
