@@ -1,0 +1,15 @@
+{
+    "ID": "42983fb49a15d26ab074b35d3715d3e95c8a20e6a9279e2693aec989ab23ab80",
+    "Chain": [
+        {
+            "Time Stamp": 1729490524.4494524,
+            "Block Data": {
+                "Files": []
+            },
+            "Previous Hash": "",
+            "Block Hash": "6b0313177201f1aca7b9bae7141c4fe735aacc72df26e89285dfcbf9010272fe",
+            "Nonce": 0
+        }
+    ],
+    "Difficulty": 5
+}

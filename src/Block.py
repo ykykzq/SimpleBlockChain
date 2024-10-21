@@ -4,7 +4,7 @@ import time
 from BlockData import BlockData
 
 class Block:
-    def __init__(self, timestamp, data:BlockData, previous_hash=''):
+    def __init__(self, timestamp:float, data:BlockData, previous_hash=''):
         """
         区块的初始化
         :param timestamp: 创建时的时间戳
@@ -33,18 +33,18 @@ class Block:
         hash = sha_256.hexdigest()
         return hash
 
-    def mine_block(self, diffculty):
+    def mine_block(self, diffculty:int):
         '''
         :param diffculty: 整型，代表挖矿难度
         '''
-        time_start = time.clock()
+        time_start = time.time()
 
         # 计算哈希
         while self.hash[0:diffculty] != ''.join(['0']*diffculty):
             self.nonce = self.nonce + 1
             self.hash = self.calculate_hash()
 
-        print("挖到区块{0},耗时{1}秒".format(self.hash, time.clock()-time_start))
+        print("挖到区块{0},耗时为{1}".format(self.hash, time.time()-time_start))
 
     def to_dict(self):
         '''

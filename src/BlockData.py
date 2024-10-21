@@ -23,15 +23,16 @@ class BlockData:
         :param author_hash: 文件上传者的哈希值，实际上是公钥
         '''
         # 计算文件的哈希值
-        file_hash_str = self.calculate_file_hash(file_path)
+        file_hash_str = BlockData.calculate_file_hash(file_path)
         # 使用文件哈希值作为密钥，对文件进行加密
-        self.encrypt_file(file_path, file_hash_str)
+        BlockData.encrypt_file(file_path, file_hash_str)
         # 计算密文的哈希值
-        enc_file_hash_str = self.calculate_file_hash(file_path + '.enc')
+        enc_file_hash_str = BlockData.calculate_file_hash(file_path + '.enc')
         # 将用户信息＆密文哈希值写入数据
         self.files.append((author_hash_str, enc_file_hash_str))
 
-    def calculate_file_hash(self, file_path: str):
+    @classmethod
+    def calculate_file_hash(cls, file_path: str):
         '''
         计算文件的哈希值
         :param file_path: 要计算哈希值的文件路径
@@ -42,7 +43,8 @@ class BlockData:
                 hash_sha256.update(chunk)
         return hash_sha256.hexdigest() 
     
-    def derive_key(self, password: str, salt: bytes) -> bytes:
+    @classmethod
+    def derive_key(cls, password: str, salt: bytes) -> bytes:
         """根据密码和盐值生成密钥"""
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -53,10 +55,11 @@ class BlockData:
         )
         return kdf.derive(password.encode())
 
-    def encrypt_file(self, file_path: str, password: str):
+    @classmethod
+    def encrypt_file(cls,file_path: str, password: str):
         """加密文件"""
         salt = os.urandom(16)  # 生成随机盐
-        key = self.derive_key(password, salt)
+        key = BlockData.derive_key(password, salt)
 
         # 生成随机的初始化向量（IV）
         iv = os.urandom(16)
@@ -72,7 +75,8 @@ class BlockData:
         with open(file_path + '.enc', 'wb') as f:
             f.write(salt + iv + ciphertext)
 
-    def decrypt_file(self, encrypted_file_path: str, password: str):
+    @classmethod
+    def decrypt_file(cls, encrypted_file_path: str, password: str):
         """解密文件"""
         with open(encrypted_file_path, 'rb') as f:
             # 读取盐、IV 和密文
@@ -80,7 +84,7 @@ class BlockData:
             iv = f.read(16)
             ciphertext = f.read()
 
-        key = self.derive_key(password, salt)
+        key = BlockData.derive_key(password, salt)
         cipher = Cipher(algorithms.AES(key), modes.CTR(iv), backend=default_backend())
         decryptor = cipher.decryptor()
 
@@ -144,10 +148,15 @@ if __name__ == '__main__':
 
     # 向data中添加用户信息与文件信息
     data = BlockData()
-    data.add_file('../data/file_example', public_key_content)
+    data.add_file('../workspace/data/file_example', public_key_content)
+
+    # 加密文件，使用文件哈希作为密钥
+    data.encrypt_file('../workspace/data/file_example',# 计算文件的哈希值
+        data.calculate_file_hash('../workspace/data/file_example'))
+    
 
     # 尝试解密文件，使用文件哈希作为密钥
-    data.decrypt_file('../data/file_example.enc',# 计算文件的哈希值
-        data.calculate_file_hash('../data/file_example'))
+    data.decrypt_file('../workspace/data/file_example.enc',# 计算文件的哈希值
+        data.calculate_file_hash('../workspace/data/file_example'))
 
     print(json.dumps(data.to_dict(), ensure_ascii=False))

@@ -2,7 +2,14 @@ import hashlib
 import random
 import time
 import json
+import os
 import pickle
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from Block import Block
 from BlockData import BlockData
 
@@ -11,7 +18,7 @@ class BlockChain:
         # 创造创世区块
         self.chain = [self._create_genesis_block()]
         # 设置挖矿难度
-        self.difficulty = 5
+        self.difficulty = 0
         # 设置当前Block Chain的ID
         current_time = time.time()
         random.seed(current_time)
@@ -52,6 +59,27 @@ class BlockChain:
             
         return True
     
+    def upload_files(self, file_path_list:dict[str], author_hash_str: str):
+        '''
+        用户调用以上传自己的文件
+        :param file_path_list:要上传的文件列表
+        :param author_hash_str:上传者的哈希值，标记身份
+        '''
+        blockdata = BlockData()
+        for file_path in file_path_list:
+            blockdata.add_file(file_path, author_hash_str)
+
+        block = Block(time.time(),blockdata, self.get_latest_block().hash)
+        block.mine_block(self.difficulty)
+        # 将当前块链接到链的最后
+        self.chain.append(block)
+        # 将加密后的文件上传
+        for file_path in file_path_list:
+            BlockData.encrypt_file(file_path, 
+                                   BlockData.calculate_file_hash(file_path))
+            file_name = file_path.split('/')[-1]
+            os.system('mv '+ file_path + '.enc' + ' '+'../workspace/upload_data/' + file_name +'.enc')
+
     def to_dict(self):
         return {
             'ID': self.id,
@@ -83,8 +111,6 @@ class BlockChain:
             return blockchain
         return None
 
-        
-
     def save_to_file(self,file_path:str)->bool:
         '''
         将当前区块链保存到文件中
@@ -110,7 +136,40 @@ if __name__ == '__main__':
     # 测试从文件保存与加载功能
 
     bc = BlockChain()
+    bc.save_to_file('../workspace/block_chain/block_chain.json')
 
-    bc.save_to_file('../data/block_chain.json')
+    new_bc = BlockChain.load_from_file('../workspace/block_chain/block_chain.json')
 
-    new_bc = BlockChain.load_from_file('../data/block_chain.json')
+    # 测试文件上传功能
+    # 生成 RSA 私钥
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,  # 可以选择 2048 或 4096 位的密钥长度
+    )
+
+    # 从私钥生成公钥
+    public_key = private_key.public_key()
+
+    # 将私钥序列化为 PEM 格式（以便存储或导出）
+    private_pem = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption()  # 可以选择加密密钥
+    )
+
+    # 将公钥序列化为 PEM 格式
+    public_pem = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+
+    private_key_str = private_pem.decode('utf-8')
+    public_key_str = public_pem.decode('utf-8')
+
+    # 按行分割字符串
+    lines = public_key_str.strip().split('\n')
+    # 取出中间部分（从第二行到倒数第二行），也就是实际的公钥部分
+    public_key_content = ''.join(lines[1:-1])
+
+    new_bc.upload_files(['../workspace/data/file_example',],public_key_content)
+    print(new_bc.verify_blockchain())
