@@ -91,10 +91,21 @@ class BlockData:
             f.write(plaintext)
             
     def to_dict(self):
-        """将 BlockData 实例转换为字典"""
+        '''
+        将 BlockData 实例转换为json字典
+        '''
         return {
-            'files': self.files,
+            'Files': self.files,
         }
+    
+    @classmethod
+    def from_dict(cls,data):
+        '''
+        从json加载一个区块链
+        '''
+        blockdata = cls()
+        blockdata.files = data['Files']
+        return blockdata
 
 if __name__ == '__main__':
     '''

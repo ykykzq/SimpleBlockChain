@@ -1,10 +1,10 @@
 import hashlib
 import json
 import time
-import BlockData
+from BlockData import BlockData
 
 class Block:
-    def __init__(self, timestamp, data, previous_hash=''):
+    def __init__(self, timestamp, data:BlockData, previous_hash=''):
         """
         区块的初始化
         :param timestamp: 创建时的时间戳
@@ -13,7 +13,7 @@ class Block:
         :param hash: 区块的hash
         """
 
-        if not isinstance(data, BlockData.BlockData):
+        if not isinstance(data, BlockData):
             print("区块中数据字段类型错误！")
         self.timestamp = timestamp
         self.data = data
@@ -45,3 +45,26 @@ class Block:
             self.hash = self.calculate_hash()
 
         print("挖到区块{0},耗时{1}秒".format(self.hash, time.clock()-time_start))
+
+    def to_dict(self):
+        '''
+        转化为字典
+        '''
+        return {
+            'Time Stamp': self.timestamp,
+            'Block Data': self.data.to_dict(),
+            'Previous Hash': self.previous_hash,
+            'Block Hash': self.hash,
+            'Nonce':self.nonce,
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        block = cls(time.time(), BlockData())
+        block.timestamp = data['Time Stamp']
+        block.data = BlockData.from_dict(data['Block Data'])
+        block.previous_hash = data['Previous Hash']
+        block.hash = data['Block Hash']
+        block.nonce = data['Nonce']
+
+        return block
