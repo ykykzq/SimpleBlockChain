@@ -17,6 +17,10 @@
 - 如果恶意用户尝试通过短哈希攻击获取所有权，需要浪费大量的算力，即使攻击成功，也不影响安全性，见下。
 - 如果恶意用户没有源文件，则无法获知文件的哈希，得到密文也无法获得数据。通过该策略保证了数据安全性。
 
+## 去重机制
+
+- 区块链根据**密文的哈希**为基准判断是否重复。如果重复，仍然记录上传信息（保证所有权的正确记录），但不再将文件上传到共享存储空间，以节省带宽。
+
 ## 参考文献
 
 [1]Zhang, Bo, et al. "Enabling secure deduplication in encrypted decentralized storage." *International Conference on Network and System Security*. Cham: Springer Nature Switzerland, 2022.
