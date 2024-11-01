@@ -16,7 +16,7 @@ class BlockData:
         '''
         self.files = []
     
-    def add_file(self, file_path: str, author_hash_str: str):
+    def add_file(self, file_path: str, author_hash_str: str) -> str:
         '''
         添加文件，实际上生成一个（用户公钥，加密后文件的哈希）键值对
         :param file_path: 要上传的文件的路径
@@ -30,6 +30,8 @@ class BlockData:
         enc_file_hash_str = BlockData.calculate_file_hash(file_path + '.enc')
         # 将用户信息＆密文哈希值写入数据
         self.files.append({'User':author_hash_str, 'File':enc_file_hash_str})
+        # 返回密文的哈希值，用于去重
+        return enc_file_hash_str
 
     @classmethod
     def calculate_file_hash(cls, file_path: str):
@@ -56,13 +58,13 @@ class BlockData:
         return kdf.derive(password.encode())
 
     @classmethod
-    def encrypt_file(cls,file_path: str, password: str):
+    def encrypt_file(cls, file_path: str, password: str):
         """加密文件"""
-        salt = os.urandom(16)  # 生成随机盐
+        salt = b'fixedsalt123456' # os.urandom(16)  # 生成随机盐
         key = BlockData.derive_key(password, salt)
 
         # 生成随机的初始化向量（IV）
-        iv = os.urandom(16)
+        iv = b'fixediv123456789' # os.urandom(16)
         cipher = Cipher(algorithms.AES(key), modes.CTR(iv), backend=default_backend())
         encryptor = cipher.encryptor()
 

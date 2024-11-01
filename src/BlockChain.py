@@ -67,18 +67,25 @@ class BlockChain:
         '''
         blockdata = BlockData()
         for file_path in file_path_list:
-            blockdata.add_file(file_path, author_hash_str)
+            # 检测是否已存在(去重操作)
+            flag = False
+            file_enc_hash = blockdata.add_file(file_path, author_hash_str)
+            for block in self.chain:
+                for file in block.data.files:
+                    if file['File'] == file_enc_hash:
+                        flag = True
+            # 若不重复将加密后的文件上传
+            if flag == False:
+                # BlockData.encrypt_file(file_path, 
+                #                    BlockData.calculate_file_hash(file_path))
+                file_name = file_path.split('/')[-1]
+                os.system('mv '+ file_path + '.enc' + ' '+'../workspace/upload_data/' + file_name +'.enc')
 
         block = Block(time.time(),blockdata, self.get_latest_block().hash)
         block.mine_block(self.difficulty)
         # 将当前块链接到链的最后
         self.chain.append(block)
-        # 将加密后的文件上传
-        for file_path in file_path_list:
-            BlockData.encrypt_file(file_path, 
-                                   BlockData.calculate_file_hash(file_path))
-            file_name = file_path.split('/')[-1]
-            os.system('mv '+ file_path + '.enc' + ' '+'../workspace/upload_data/' + file_name +'.enc')
+            
 
     def to_dict(self):
         return {
