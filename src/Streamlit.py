@@ -3,27 +3,18 @@ import graphviz
 from User import User
 
 
-
+# TODO:打印出当前区块链
 def show_block_chain(user:User):
     '''
     打印当前用户正在使用的区块链
     '''
     # Create a graphlib graph object
     graph = graphviz.Digraph()
-    graph.edge("run", "intr")
-    graph.edge("intr", "runbl")
-    graph.edge("runbl", "run")
-    graph.edge("run", "kernel")
-    graph.edge("kernel", "zombie")
-    graph.edge("kernel", "sleep")
-    graph.edge("kernel", "runmem")
-    graph.edge("sleep", "swap")
-    graph.edge("swap", "runswap")
-    graph.edge("runswap", "new")
-    graph.edge("runswap", "runmem")
-    graph.edge("new", "runmem")
-    graph.edge("sleep", "runmem")
-
+    previous_hash = ''
+    for block in user.block_chain.chain:
+        graph.edge(previous_hash, block.hash[0:6])
+        previous_hash = block.hash[0:6]
+    # 打印区块链
     st.graphviz_chart(graph)
 
 
@@ -97,3 +88,8 @@ if st.session_state.file_input_visible:
             st.session_state.file_input_visible = False  # 隐藏输入框
         else:
             st.error('请至少添加一个文件路径')
+
+if 'user' in st.session_state:
+    if hasattr(st.session_state.user, 'block_chain'):
+        if st.button('展示区块链'):
+            show_block_chain(st.session_state.user)

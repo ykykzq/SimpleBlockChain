@@ -21,6 +21,24 @@
 
 - 区块链根据**密文的哈希**为基准判断是否重复。如果重复，仍然记录上传信息（保证所有权的正确记录），但不再将文件上传到共享存储空间，以节省带宽。
 
+## 运行方式
+
+首先切换到src文件夹下
+
+```
+cd src/
+```
+
+然后执行下面的指令即可打开网页运行
+
+```
+streamlit run Streamlit.py 
+```
+
+前端的交互逻辑如下：
+
+
+
 ## 参考文献
 
 [1]Zhang, Bo, et al. "Enabling secure deduplication in encrypted decentralized storage." *International Conference on Network and System Security*. Cham: Springer Nature Switzerland, 2022.
