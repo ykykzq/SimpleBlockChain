@@ -1,8 +1,7 @@
 from BlockChain import BlockChain
 from Block import Block
-import hashlib
-import json
 import os
+import random
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -134,3 +133,9 @@ if __name__ == '__main__':
     user.upload_files(['../workspace/data/file_example',])
     # 下载自己的文件
 
+    
+    # 上传多个自己的文件测试
+    for i in range(0,1000):
+        n = random.randint(1,10)
+        file_list = ['../workspace/data/file_example',] * n
+        user.upload_files(file_list)
