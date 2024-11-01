@@ -1,4 +1,6 @@
-import hashlib
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+import json
 import json
 import time
 from BlockData import BlockData
@@ -27,11 +29,16 @@ class Block:
         :return : 哈希值，字符串表示
         '''
         block_str = self.previous_hash + str(self.timestamp) + json.dumps(self.data.to_dict(), ensure_ascii=False)
-        sha_256 = hashlib.sha256()
-        sha_256.update(block_str.encode('utf-8'))
-
-        hash = sha_256.hexdigest()
-        return hash
+        
+        # Create a SHA-256 hash object
+        digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        
+        # Update the hash object with the block string encoded as UTF-8
+        digest.update(block_str.encode('utf-8'))
+        
+        # Finalize the hash and return the hexadecimal representation
+        block_hash = digest.finalize().hex()  # Convert to hexadecimal string
+        return block_hash
 
     def mine_block(self, diffculty:int):
         '''

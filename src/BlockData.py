@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -39,11 +38,19 @@ class BlockData:
         计算文件的哈希值
         :param file_path: 要计算哈希值的文件路径
         '''
-        hash_sha256 = hashlib.sha256()
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"The file '{file_path}' does not exist.")
+        
+        # 创建 SHA-256 哈希对象
+        hash_sha256 = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        
+        # 读取文件并更新哈希值
         with open(file_path, 'rb') as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_sha256.update(chunk)
-        return hash_sha256.hexdigest() 
+        
+        # 返回十六进制哈希值
+        return hash_sha256.finalize().hex()
     
     @classmethod
     def derive_key(cls, password: str, salt: bytes) -> bytes:
