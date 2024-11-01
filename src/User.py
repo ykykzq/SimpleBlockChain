@@ -40,6 +40,8 @@ class User:
         '''
         self.block_chain_file_path = block_chain_file_path
         self.block_chain = BlockChain()
+        # 自动保存区块链
+        self.save_working_block_chain(self.block_chain_file_path)
     
     def set_working_block_chain(self, block_chain_file_path:str):
         '''
