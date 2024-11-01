@@ -111,7 +111,7 @@ class BlockChain:
             return blockchain
         return None
 
-    def save_to_file(self,file_path:str)->bool:
+    def save_to_file(self, file_path:str)->bool:
         '''
         将当前区块链保存到文件中
         '''
