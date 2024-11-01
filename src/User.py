@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
     
     # 上传多个自己的文件测试
-    for i in range(0,85):
+    for i in range(0,80):
         n = random.randint(1,10)
         file_list = ['../workspace/data/file_example',] * n
         user.upload_files(file_list)

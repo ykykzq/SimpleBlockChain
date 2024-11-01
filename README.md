@@ -37,7 +37,7 @@ streamlit run Streamlit.py
 
 前端的交互逻辑如下：
 
-
+<img src="./images/2.png" alt="picture" style="zoom:50%;" />
 
 ## 参考文献
 
